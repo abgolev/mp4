@@ -275,9 +275,4 @@ public class Nodes implements Saveable {
     public boolean isLegacy() {
         return !new File(jenkins.getRootDir(), "nodes").isDirectory();
     }
-
-	public void updateAndTrim() {
-		jenkins.updateComputerList();
-		jenkins.trimLabels();
-	}
 }
