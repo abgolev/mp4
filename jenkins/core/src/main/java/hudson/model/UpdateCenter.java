@@ -555,7 +555,8 @@ public class UpdateCenter extends AbstractModelObject implements Saveable, OnMas
         Map<String,Plugin> pluginMap = new LinkedHashMap<String, Plugin>();
         for (UpdateSite site : sites) {
             for (Plugin plugin: site.getAvailables()) {
-                tryAddPluginToMap(pluginMap, plugin);
+                final Plugin existing = pluginMap.get(plugin.name);
+                pluginUpdate(pluginMap, plugin, existing);
             }
         }
 
@@ -593,15 +594,15 @@ public class UpdateCenter extends AbstractModelObject implements Saveable, OnMas
         Map<String,Plugin> pluginMap = new LinkedHashMap<String, Plugin>();
         for (UpdateSite site : sites) {
             for (Plugin plugin: site.getUpdates()) {
-                tryAddPluginToMap(pluginMap, plugin);
+                final Plugin existing = pluginMap.get(plugin.name);
+                pluginUpdate(pluginMap, plugin, existing);
             }
         }
 
         return new ArrayList<Plugin>(pluginMap.values());
     }
 
-	public void tryAddPluginToMap(Map<String, Plugin> pluginMap, Plugin plugin) {
-		final Plugin existing = pluginMap.get(plugin.name);
+	public void pluginUpdate(Map<String, Plugin> pluginMap, Plugin plugin, final Plugin existing) {
 		if (existing == null) {
 		    pluginMap.put(plugin.name, plugin);
 		} else if (!existing.version.equals(plugin.version)) {
