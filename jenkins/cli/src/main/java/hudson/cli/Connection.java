@@ -48,6 +48,7 @@ import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.interfaces.DSAPublicKey;
@@ -152,21 +153,15 @@ public class Connection {
         if (side) {
             AlgorithmParameterGenerator paramGen = AlgorithmParameterGenerator.getInstance("DH");
             paramGen.init(keySize);
-
-            KeyPairGenerator dh = KeyPairGenerator.getInstance("DH");
-            dh.initialize(paramGen.generateParameters().getParameterSpec(DHParameterSpec.class));
-            keyPair = dh.generateKeyPair();
+            keyPair = generateKeyPairWithSpec(paramGen.generateParameters().getParameterSpec(DHParameterSpec.class));
 
             // send a half and get a half
             writeKey(keyPair.getPublic());
             otherHalf = KeyFactory.getInstance("DH").generatePublic(readKey());
         } else {
-            otherHalf = KeyFactory.getInstance("DH").generatePublic(readKey());
-
-            KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("DH");
-            keyPairGen.initialize(((DHPublicKey) otherHalf).getParams());
-            keyPair = keyPairGen.generateKeyPair();
-
+            otherHalf = KeyFactory.getInstance("DH").generatePublic(readKey());            
+            keyPair = generateKeyPairWithSpec(((DHPublicKey) otherHalf).getParams());
+            
             // send a half and get a half
             writeKey(keyPair.getPublic());
         }
@@ -177,6 +172,13 @@ public class Connection {
 
         return ka;
     }
+    
+    public KeyPair generateKeyPairWithSpec(DHParameterSpec specType) 
+    		throws NoSuchAlgorithmException, GeneralSecurityException{
+        		KeyPairGenerator dh = KeyPairGenerator.getInstance("DH");
+        		dh.initialize(specType);
+        		return dh.generateKeyPair();
+    } 
 
     /**
      * Upgrades a connection with transport encryption by the specified symmetric cipher.
