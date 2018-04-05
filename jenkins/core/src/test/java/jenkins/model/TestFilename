@@ -1,0 +1,51 @@
+/* Test File */
+
+package jenkins.model;
+
+import hudson.Util;
+import hudson.util.StreamTaskListener;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Map;
+import java.util.TimeZone;
+import java.util.TreeMap;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import org.apache.commons.io.FileUtils;
+
+import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public class TestFilename{
+  String Filename1 = "testfilename";
+  String Filename2 = "TestFileName";
+  String Filename3 = "TEST@FILE#NAME";
+  
+  @Test
+  public void TestFilenameEqual(){
+  jenkins.model.IdStrategy.CaseSensitive cs;
+  cs = new jenkins.model.IdStrategy.CaseSensitive();
+  String result = cs.idFromFilename(Filename);
+  assertEquals(result, "testfilename");
+  }
+  
+  @Test
+  public void TestFilenameFalse(){
+  jenkins.model.IdStrategy.CaseSensitive cs;
+    cs = new jenkins.model.IdStrategy.CaseSensitive();
+  String result = cs.idFromFilename(Filename2);
+  assertFalse(result == "TestFileName");
+  }
+  
+  @Test
+  public void TestFilenameFalse(){
+  jenkins.model.IdStrategy.CaseSensitive cs;
+  cs = new jenkins.model.IdStrategy.CaseSensitive();
+  String result = cs.idFromFilename(Filename3);
+  assertFalse(result == "TEST@FILE#NAME");
+  }
+}
